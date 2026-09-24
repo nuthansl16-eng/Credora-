@@ -2,6 +2,13 @@ import "server-only";
 import crypto from "node:crypto";
 import type { PaymentProvider, CreateOrderInput, CreateOrderResult, VerifiedWebhookEvent } from "./provider";
 
+type RazorpayResponse = {
+  id?: string;
+  amount?: number;
+  currency?: string;
+  error?: { description?: string };
+};
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`${name} is not configured`);
@@ -14,7 +21,7 @@ function timingSafeHex(actual: string, expected: string): boolean {
   return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
-async function razorpay(path: string, init: RequestInit = {}) {
+async function razorpay(path: string, init: RequestInit = {}): Promise<RazorpayResponse> {
   const key = required("RAZORPAY_KEY_ID");
   const secret = required("RAZORPAY_KEY_SECRET");
   const auth = Buffer.from(`${key}:${secret}`).toString("base64");
@@ -28,9 +35,9 @@ async function razorpay(path: string, init: RequestInit = {}) {
     cache: "no-store",
   });
   const text = await response.text();
-  let body: any = null;
-  try { body = JSON.parse(text); } catch { /* provider error may not be JSON */ }
-  if (!response.ok) throw new Error(`Razorpay API error ${response.status}: ${body?.error?.description ?? "request failed"}`);
+  let body: RazorpayResponse = {};
+  try { body = JSON.parse(text) as RazorpayResponse; } catch { /* provider error may not be JSON */ }
+  if (!response.ok) throw new Error(`Razorpay API error ${response.status}: ${body.error?.description ?? "request failed"}`);
   return body;
 }
 
@@ -48,6 +55,7 @@ export const razorpayProvider: PaymentProvider = {
         notes: input.metadata,
       }),
     });
+    if (!order.id || order.amount === undefined || !order.currency) throw new Error("Malformed Razorpay order response");
     return {
       providerOrderId: order.id,
       checkoutPayload: {
@@ -68,15 +76,21 @@ export const razorpayProvider: PaymentProvider = {
     const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
     if (!timingSafeHex(signature, expected)) throw new Error("Invalid Razorpay webhook signature");
 
-    const body = JSON.parse(rawBody);
+    const body: {
+      id?: string;
+      event?: string;
+      payload?: {
+        payment?: { entity?: { id?: string; order_id?: string; amount?: number; currency?: string } };
+        refund?: { entity?: { id?: string; payment_id?: string; order_id?: string; amount?: number; notes?: { order_id?: string } } };
+      };
+    } = JSON.parse(rawBody);
     const eventType = String(body.event ?? "");
     const payment = body.payload?.payment?.entity;
     const refund = body.payload?.refund?.entity;
     if (!payment && !refund) throw new Error("Unsupported Razorpay webhook payload");
 
-    const entity = payment ?? refund;
     const orderId = payment?.order_id ?? refund?.notes?.order_id ?? refund?.order_id;
-    const paymentId = payment?.id ?? refund?.payment_id ?? entity.id;
+    const paymentId = payment?.id ?? refund?.payment_id ?? refund?.id;
     const amount = Number(payment?.amount ?? refund?.amount);
     const currency = String(payment?.currency ?? "INR").toUpperCase();
     if (!orderId || !paymentId || !Number.isSafeInteger(amount) || !currency) throw new Error("Malformed Razorpay webhook payload");
@@ -102,6 +116,7 @@ export const razorpayProvider: PaymentProvider = {
       method: "POST",
       body: JSON.stringify({ amount: amountMinorUnits }),
     });
+    if (!refund.id) throw new Error("Malformed Razorpay refund response");
     return { providerRefundId: refund.id };
   },
 };
