@@ -77,7 +77,7 @@ export const mockProvider: PaymentProvider = {
     };
   },
 
-  async refund(_providerPaymentId: string) {
+  async refund() {
     assertNotProduction();
     return { providerRefundId: `mock_refund_${crypto.randomUUID()}` };
   },
