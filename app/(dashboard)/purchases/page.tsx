@@ -20,7 +20,7 @@ export default async function PurchaseHistoryPage() {
         <p className="mt-6 text-sm text-muted-foreground">No purchases yet.</p>
       ) : (
         <ul className="mt-6 divide-y rounded-lg border">
-          {purchases!.map((p: any) => (
+          {purchases!.map((p) => (
             <li key={p.id} className="flex items-center justify-between p-4 text-sm">
               <div>
                 <p className="font-medium">{p.religions?.name}</p>
