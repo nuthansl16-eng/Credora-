@@ -13,7 +13,7 @@ export default function OnboardingTermsPage() {
           <li>Digital points have no cash value and cannot be withdrawn, transferred, or resold</li>
           <li>This is not gambling, an investment, or a donation-processing service</li>
           <li>
-            You've read our{" "}
+            You&apos;ve read our{" "}
             <Link href="/legal/terms" className="underline" target="_blank">Terms of Service</Link> and{" "}
             <Link href="/legal/privacy" className="underline" target="_blank">Privacy Policy</Link>
           </li>
