@@ -23,7 +23,7 @@ export default async function ContributionsPage() {
         <p className="mt-6 text-sm text-muted-foreground">No contributions yet.</p>
       ) : (
         <ul className="mt-6 divide-y rounded-lg border">
-          {transactions!.map((t: any) => (
+          {transactions!.map((t) => (
             <li key={t.id} className="flex items-center justify-between p-4 text-sm">
               <div>
                 <p className="font-medium">{t.religions?.name}</p>
