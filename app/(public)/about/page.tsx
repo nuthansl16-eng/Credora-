@@ -7,7 +7,7 @@ export default function AboutPage() {
       <p className="mt-4">
         {appConfig.name} is a permanent, global leaderboard for religions and communities. Registered
         users may select a community and purchase non-transferable digital points; once a payment is
-        verified, those points are permanently added to that community's lifetime score.
+        verified, those points are permanently added to that community&apos;s lifetime score.
       </p>
       <p className="mt-4">{appConfig.integrityPhrase}</p>
 
@@ -23,7 +23,7 @@ export default function AboutPage() {
       <h2 className="mt-8 text-lg font-semibold">What digital points are</h2>
       <p className="mt-2 text-muted-foreground">
         Points have no cash value, cannot be withdrawn, transferred, or resold, and never expire. They
-        exist solely to affect a community's position on our internal, permanent leaderboard.
+        exist solely to affect a community&apos;s position on our internal, permanent leaderboard.
       </p>
 
       <p className="mt-8 text-xs text-muted-foreground">
