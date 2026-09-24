@@ -65,7 +65,7 @@ export default async function AdminReconciliationPage() {
           </tr>
         </thead>
         <tbody className="divide-y">
-          {(scores ?? []).map((s: any) => (
+          {(scores ?? []).map((s) => (
             <tr key={s.religion_id}>
               <td className="py-2">{s.current_rank ?? "—"}</td>
               <td className="py-2">{s.religions?.name}</td>
