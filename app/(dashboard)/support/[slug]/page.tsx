@@ -5,7 +5,7 @@ import { PackagePicker } from "./package-picker";
 
 export default async function SupportPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: religion } = await supabase
     .from("religions")
