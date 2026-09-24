@@ -3,13 +3,14 @@ import { notFound } from "next/navigation";
 import { appConfig } from "@/lib/config";
 import { PackagePicker } from "./package-picker";
 
-export default async function SupportPage({ params }: { params: { slug: string } }) {
+export default async function SupportPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const supabase = createClient();
 
   const { data: religion } = await supabase
     .from("religions")
     .select("id, name, slug")
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .eq("is_active", true)
     .eq("is_approved", true)
     .single();
@@ -31,7 +32,8 @@ export default async function SupportPage({ params }: { params: { slug: string }
     .eq("is_active", true)
     .order("amount_minor_units", { ascending: true });
 
-  const grouped = (packages ?? []).reduce<Record<string, typeof packages>>((acc, p) => {
+  type PricingPackage = NonNullable<typeof packages>[number];
+  const grouped = (packages ?? []).reduce<Record<string, PricingPackage[]>>((acc, p) => {
     (acc[p.region_code] ??= []).push(p);
     return acc;
   }, {});
