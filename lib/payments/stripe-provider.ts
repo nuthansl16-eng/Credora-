@@ -2,6 +2,24 @@ import "server-only";
 import crypto from "node:crypto";
 import type { PaymentProvider, CreateOrderInput, CreateOrderResult, VerifiedWebhookEvent } from "./provider";
 
+type StripeResponse = {
+  id?: string;
+  url?: string;
+  amount_total?: number;
+  amount_refunded?: number;
+  amount?: number;
+  currency?: string;
+  payment_intent?: string | null;
+  metadata?: Record<string, string>;
+  error?: { message?: string };
+};
+
+type StripeEvent = {
+  id?: string;
+  type?: string;
+  data?: { object?: StripeResponse };
+};
+
 function required(name: string): string {
   const value = process.env[name];
   if (!value) throw new Error(`${name} is not configured`);
@@ -12,7 +30,7 @@ function formEncode(values: Record<string, string>) {
   return new URLSearchParams(values).toString();
 }
 
-async function stripeApi(path: string, body: Record<string, string>) {
+async function stripeApi(path: string, body: Record<string, string>): Promise<StripeResponse> {
   const key = required("STRIPE_SECRET_KEY");
   const response = await fetch(`https://api.stripe.com/v1${path}`, {
     method: "POST",
@@ -21,9 +39,9 @@ async function stripeApi(path: string, body: Record<string, string>) {
     cache: "no-store",
   });
   const text = await response.text();
-  let data: any = null;
-  try { data = JSON.parse(text); } catch { /* ignore */ }
-  if (!response.ok) throw new Error(`Stripe API error ${response.status}: ${data?.error?.message ?? "request failed"}`);
+  let data: StripeResponse = {};
+  try { data = JSON.parse(text) as StripeResponse; } catch { /* ignore */ }
+  if (!response.ok) throw new Error(`Stripe API error ${response.status}: ${data.error?.message ?? "request failed"}`);
   return data;
 }
 
@@ -72,7 +90,7 @@ export const stripeProvider: PaymentProvider = {
     const signature = headers.get("stripe-signature");
     if (!signature) throw new Error("Missing Stripe signature header");
     verifyStripeSignature(rawBody, signature, required("STRIPE_WEBHOOK_SECRET"));
-    const event = JSON.parse(rawBody);
+    const event = JSON.parse(rawBody) as StripeEvent;
     const object = event.data?.object;
     if (!event.id || !object) throw new Error("Malformed Stripe event");
 
@@ -118,6 +136,7 @@ export const stripeProvider: PaymentProvider = {
       payment_intent: providerPaymentId,
       amount: String(amountMinorUnits),
     });
-    return { providerRefundId: String(refund.id) };
+    if (!refund.id) throw new Error("Malformed Stripe refund response");
+    return { providerRefundId: refund.id };
   },
 };
