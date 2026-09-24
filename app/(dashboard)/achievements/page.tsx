@@ -17,7 +17,7 @@ export default async function AchievementsPage() {
     .select("code, name, description")
     .eq("is_active", true);
 
-  const earnedCodes = new Set((earned ?? []).map((e: any) => e.achievements?.code));
+  const earnedCodes = new Set((earned ?? []).map((e) => e.achievements?.code));
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
