@@ -9,7 +9,7 @@ export default async function AdminSettingsPage() {
       <h1 className="text-2xl font-semibold">Platform Settings</h1>
       <p className="mt-1 text-xs text-muted-foreground">
         Most platform settings are edited in code (`lib/config.ts`) or via environment variables, kept
-        out of the database so they can't be changed by a database-level compromise alone. This page is
+        out of the database so they can&apos;t be changed by a database-level compromise alone. This page is
         a read-only summary.
       </p>
 
@@ -23,7 +23,7 @@ export default async function AdminSettingsPage() {
 
       <p className="mt-8 text-xs text-muted-foreground">
         To change the payment provider, app name, theme, or charity percentage, edit{" "}
-        <code>lib/config.ts</code> and/or your deployment's environment variables, then redeploy. See{" "}
+        <code>lib/config.ts</code> and/or your deployment&apos;s environment variables, then redeploy. See{" "}
         <code>docs/PAYMENT_SETUP.md</code> for switching payment providers safely.
       </p>
     </main>
