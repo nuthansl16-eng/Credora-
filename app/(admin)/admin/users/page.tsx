@@ -21,7 +21,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: {
     <main className="mx-auto max-w-4xl px-4 py-10">
       <h1 className="text-2xl font-semibold">Users</h1>
       <p className="mt-1 text-xs text-muted-foreground">
-        Emails and payment details are never shown here — only what's needed for moderation.
+        Emails and payment details are never shown here — only what&apos;s needed for moderation.
       </p>
 
       <form action="/admin/users" className="mt-4 flex gap-2">
