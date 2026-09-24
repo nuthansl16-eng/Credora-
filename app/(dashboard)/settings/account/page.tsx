@@ -4,7 +4,7 @@ import Link from "next/link";
 
 async function updateUsername(formData: FormData) {
   "use server";
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -19,7 +19,7 @@ async function updateUsername(formData: FormData) {
 }
 
 export default async function AccountSettingsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
