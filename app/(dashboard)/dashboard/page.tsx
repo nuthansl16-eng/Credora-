@@ -33,14 +33,14 @@ export default async function DashboardPage() {
     .select("status")
     .eq("referrer_user_id", user.id);
 
-  const rewardedReferrals = (referrals ?? []).filter((r: any) => r.status === "rewarded").length;
+  const rewardedReferrals = (referrals ?? []).filter((r) => r.status === "rewarded").length;
   const { data: purchaseReferralRewards } = await supabase
     .from("referral_purchase_rewards")
     .select("reward_points, status")
     .eq("referrer_user_id", user.id);
   const purchaseReferralPoints = (purchaseReferralRewards ?? [])
     .filter((r: any) => r.status === "rewarded")
-    .reduce((sum: number, r: any) => sum + Number(r.reward_points), 0);
+    .reduce((sum, r) => sum + Number(r.reward_points), 0);
   const referralCode = profile?.referral_code ?? "";
   const referralLink = referralCode ? `/signup?ref=${encodeURIComponent(referralCode)}` : "/signup";
 
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
           </p>
         ) : (
           <ul className="mt-4 divide-y rounded-lg border">
-            {contributions!.map((c: any) => (
+            {contributions!.map((c) => (
               <li key={c.religion_id} className="flex items-center justify-between p-4 text-sm">
                 <Link href={`/religions/${c.religions.slug}`} className="font-medium hover:underline">
                   {c.religions.name}
@@ -93,7 +93,7 @@ export default async function DashboardPage() {
           <p className="mt-2 text-sm text-muted-foreground">No achievements earned yet.</p>
         ) : (
           <ul className="mt-4 grid grid-cols-2 gap-3">
-            {achievements!.map((a: any, i: number) => (
+            {achievements!.map((a, i) => (
               <li key={i} className="rounded-lg border p-3 text-sm">
                 <p className="font-medium">{a.achievements.name}</p>
                 <p className="text-xs text-muted-foreground">{a.achievements.description}</p>
