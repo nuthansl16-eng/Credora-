@@ -1,6 +1,9 @@
 import "server-only";
 import type { PaymentMethodId } from "./payment-methods";
 import { paymentMethodOptions } from "./payment-methods";
+import { mockProvider } from "./mock-provider";
+import { razorpayProvider } from "./razorpay-provider";
+import { stripeProvider } from "./stripe-provider";
 
 export interface CreateOrderInput {
   purchaseId: string; amountMinorUnits: number; currency: string;
@@ -28,10 +31,8 @@ export function getPaymentProvider(regionCode?: string): PaymentProvider {
   const providerName = configured === "auto"
     ? (regionCode?.toUpperCase() === "IN" ? "razorpay" : "stripe")
     : configured;
-  if (providerName === "mock") {
-    const { mockProvider } = require("./mock-provider"); return mockProvider;
-  }
-  if (providerName === "razorpay") { const { razorpayProvider } = require("./razorpay-provider"); return razorpayProvider; }
-  if (providerName === "stripe") { const { stripeProvider } = require("./stripe-provider"); return stripeProvider; }
+  if (providerName === "mock") return mockProvider;
+  if (providerName === "razorpay") return razorpayProvider;
+  if (providerName === "stripe") return stripeProvider;
   throw new Error(`Unknown PAYMENT_PROVIDER: ${providerName}`);
 }
