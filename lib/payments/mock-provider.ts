@@ -22,14 +22,6 @@ function sign(payload: string): string {
   return crypto.createHmac("sha256", MOCK_SIGNING_SECRET).update(payload).digest("hex");
 }
 
-/**
- * MOCK PROVIDER — LOCAL DEVELOPMENT ONLY.
- *
- * Simulates a hosted-checkout payment provider end to end, including a
- * signed webhook, so the exact same code path (webhook -> signature
- * verification -> idempotency -> award_purchase_points) is exercised as
- * with a real provider. It never touches real money and refuses to run with NODE_ENV=production.
- */
 export const mockProvider: PaymentProvider = {
   name: "mock",
 
@@ -44,9 +36,6 @@ export const mockProvider: PaymentProvider = {
         amountMinorUnits: input.amountMinorUnits,
         currency: input.currency,
         preferredPaymentMethod: input.preferredPaymentMethod ?? "auto",
-        // The mock checkout page (app/(dashboard)/checkout) posts back to
-        // /api/webhooks/payments itself with one of these outcomes,
-        // simulating what a real provider's webhook would send.
         simulateOutcomes: ["succeeded", "failed"],
       },
     };
@@ -88,13 +77,12 @@ export const mockProvider: PaymentProvider = {
     };
   },
 
-  async refund(providerPaymentId: string) {
+  async refund(_providerPaymentId: string) {
     assertNotProduction();
     return { providerRefundId: `mock_refund_${crypto.randomUUID()}` };
   },
 };
 
-/** Exported so the mock checkout UI can build a correctly signed request body. */
 export function signMockPayload(payload: string): string {
   return sign(payload);
 }
