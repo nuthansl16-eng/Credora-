@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 const protectedPrefixes = ["/dashboard", "/profile", "/contributions", "/purchases", "/achievements", "/settings", "/support", "/checkout", "/onboarding", "/admin", "/report"];
 
@@ -11,10 +11,10 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll() { return request.cookies.getAll(); },
-        setAll(cookies) {
-          cookies.forEach(({ name, value, options }) => request.cookies.set(name, value));
+        setAll(cookiesToSet: Array<{ name: string; value: string; options?: CookieOptions }>) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           response = NextResponse.next({ request });
-          cookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
         },
       },
     }
