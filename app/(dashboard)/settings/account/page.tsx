@@ -33,7 +33,7 @@ export default async function AccountSettingsPage() {
         <p className="text-muted-foreground">Email</p>
         <p className="font-medium">{user?.email}</p>
         <p className="mt-2 text-xs text-muted-foreground">
-          Password changes and email changes go through Supabase Auth's standard flows — use{" "}
+          Password changes and email changes go through Supabase Auth&apos;s standard flows — use{" "}
           <Link href="/forgot-password" className="underline">Forgot password</Link> to change your password.
         </p>
       </div>
