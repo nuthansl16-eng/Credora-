@@ -68,7 +68,7 @@ export default async function AdminReconciliationPage() {
           {(scores ?? []).map((s) => (
             <tr key={s.religion_id}>
               <td className="py-2">{s.current_rank ?? "—"}</td>
-              <td className="py-2">{s.religions?.name}</td>
+              <td className="py-2">{s.religions?.[0]?.name}</td>
               <td className="py-2 tabular-nums">{Number(s.lifetime_points).toLocaleString()}</td>
               <td className="py-2">{s.verified_supporter_count}</td>
               <td className="py-2">{new Date(s.last_updated_at).toLocaleString()}</td>
