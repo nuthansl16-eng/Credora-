@@ -3,8 +3,20 @@ import { appConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
 import { TiltCard } from "@/components/tilt-card";
 
+interface LandingScore {
+  lifetime_points: number | string | null;
+  current_rank: number | null;
+}
+
+interface LandingReligion {
+  name: string | null;
+  slug: string | null;
+  sacred_symbol: string | null;
+  religion_scores: LandingScore[] | null;
+}
+
 export default async function LandingPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: topThree } = await supabase
     .from("religions")
     .select("name, slug, symbol_image_url, sacred_symbol, sacred_symbol_label, religion_scores ( lifetime_points, current_rank )")
@@ -12,6 +24,8 @@ export default async function LandingPage() {
     .eq("is_approved", true)
     .order("current_rank", { foreignTable: "religion_scores", ascending: true, nullsFirst: false })
     .limit(3);
+
+  const rows = (topThree as LandingReligion[] | null ?? []);
 
   return (
     <main>
@@ -30,26 +44,26 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {topThree && topThree.length > 0 && (
+      {rows.length > 0 && (
         <section className="mx-auto max-w-3xl px-4 pb-24">
           <h2 className="text-center text-lg font-semibold text-muted-foreground">Currently leading</h2>
           <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {topThree.map((r: any) => (
-            <li key={r.slug}>
-              <TiltCard className="cr-leader-card rounded-lg border">
-                <div className="p-4 text-center">
-                  <div className="cr-mini-symbol mx-auto mb-2">{r.sacred_symbol ?? "✦"}</div>
-                  <p className="text-2xl font-semibold">#{r.religion_scores?.[0]?.current_rank ?? "—"}</p>
-                  <Link href={`/religions/${r.slug}`} className="mt-1 block font-medium hover:underline">
-                    {r.name}
-                  </Link>
-                  <p className="text-xs text-muted-foreground">
-                    {Number(r.religion_scores?.[0]?.lifetime_points ?? 0).toLocaleString()} pts
-                  </p>
-                </div>
-              </TiltCard>
-            </li>
-          ))}
+            {rows.map((r) => (
+              <li key={r.slug ?? r.name ?? "unknown"}>
+                <TiltCard className="cr-leader-card rounded-lg border">
+                  <div className="p-4 text-center">
+                    <div className="cr-mini-symbol mx-auto mb-2">{r.sacred_symbol ?? "✦"}</div>
+                    <p className="text-2xl font-semibold">#{r.religion_scores?.[0]?.current_rank ?? "—"}</p>
+                    <Link href={`/religions/${r.slug}`} className="mt-1 block font-medium hover:underline">
+                      {r.name}
+                    </Link>
+                    <p className="text-xs text-muted-foreground">
+                      {Number(r.religion_scores?.[0]?.lifetime_points ?? 0).toLocaleString()} pts
+                    </p>
+                  </div>
+                </TiltCard>
+              </li>
+            ))}
           </ul>
         </section>
       )}
