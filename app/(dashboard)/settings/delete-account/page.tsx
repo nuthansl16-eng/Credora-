@@ -11,7 +11,7 @@ export default function DeleteAccountPage() {
         by law — this does not restore your points to a leaderboard or make points transferable.
       </p>
       <p className="mt-2 text-sm text-muted-foreground">
-        This action cannot be undone from the app. You'll be signed out immediately.
+        This action cannot be undone from the app. You&apos;ll be signed out immediately.
       </p>
 
       <form action={requestAccountDeletion} className="mt-6 space-y-3">
