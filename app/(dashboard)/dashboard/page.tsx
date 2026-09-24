@@ -39,7 +39,7 @@ export default async function DashboardPage() {
     .select("reward_points, status")
     .eq("referrer_user_id", user.id);
   const purchaseReferralPoints = (purchaseReferralRewards ?? [])
-    .filter((r: any) => r.status === "rewarded")
+    .filter((r) => r.status === "rewarded")
     .reduce((sum, r) => sum + Number(r.reward_points), 0);
   const referralCode = profile?.referral_code ?? "";
   const referralLink = referralCode ? `/signup?ref=${encodeURIComponent(referralCode)}` : "/signup";
@@ -71,7 +71,7 @@ export default async function DashboardPage() {
         <h2 className="text-lg font-semibold">Your contributions</h2>
         {(contributions ?? []).length === 0 ? (
           <p className="mt-2 text-sm text-muted-foreground">
-            You haven't supported a community yet. <Link href="/leaderboard" className="underline">Browse the leaderboard</Link>.
+            You haven&apos;t supported a community yet. <Link href="/leaderboard" className="underline">Browse the leaderboard</Link>.
           </p>
         ) : (
           <ul className="mt-4 divide-y rounded-lg border">
