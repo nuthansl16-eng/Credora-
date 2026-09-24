@@ -8,7 +8,7 @@ export default async function AdminSettingsPage() {
     <main className="mx-auto max-w-2xl px-4 py-10">
       <h1 className="text-2xl font-semibold">Platform Settings</h1>
       <p className="mt-1 text-xs text-muted-foreground">
-        Most platform settings are edited in code (`lib/config.ts`) or via environment variables, kept
+        Most platform settings are edited in code (lib/config.ts) or via environment variables, kept
         out of the database so they can&apos;t be changed by a database-level compromise alone. This page is
         a read-only summary.
       </p>
