@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { savePreferredReligion } from "../../actions";
 
 export default async function OnboardingReligionPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: religions } = await supabase
     .from("religions")
     .select("id, name, slug")
@@ -22,7 +22,7 @@ export default async function OnboardingReligionPage() {
 
       <form action={savePreferredReligion} className="mt-6 space-y-4">
         <select name="religionId" className="w-full rounded-md border px-3 py-2 text-sm" defaultValue="">
-          <option value="">I'll choose later</option>
+          <option value="">I&apos;ll choose later</option>
           {(religions ?? []).map((r) => (
             <option key={r.id} value={r.id}>
               {r.name}
