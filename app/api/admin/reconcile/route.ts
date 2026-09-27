@@ -22,7 +22,7 @@ async function reconcile(req: NextRequest) {
     if (!assertSameOrigin(req)) {
       return NextResponse.json({ error: "Cross-site request rejected" }, { status: 403 });
     }
-    const supabase = createClient();
+    const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
