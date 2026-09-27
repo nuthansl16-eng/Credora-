@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import crypto from "node:crypto";
 
 async function requireUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
