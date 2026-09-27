@@ -96,12 +96,15 @@ export default async function DashboardPage() {
           <p className="mt-2 text-sm text-muted-foreground">No achievements earned yet.</p>
         ) : (
           <ul className="mt-4 grid grid-cols-2 gap-3">
-            {achievements!.map((a, i) => (
-              <li key={i} className="rounded-lg border p-3 text-sm">
-                <p className="font-medium">{a.achievements.name}</p>
-                <p className="text-xs text-muted-foreground">{a.achievements.description}</p>
-              </li>
-            ))}
+            {achievements!.map((a, i) => {
+              const achievement = a.achievements?.[0];
+              return (
+                <li key={i} className="rounded-lg border p-3 text-sm">
+                  <p className="font-medium">{achievement?.name ?? "Achievement"}</p>
+                  <p className="text-xs text-muted-foreground">{achievement?.description ?? ""}</p>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
