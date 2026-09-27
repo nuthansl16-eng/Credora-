@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ purchaseId: string }> }) {
   const { purchaseId } = await params;
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   const { data: purchase, error } = await supabase
