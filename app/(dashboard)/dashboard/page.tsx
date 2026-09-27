@@ -75,14 +75,17 @@ export default async function DashboardPage() {
           </p>
         ) : (
           <ul className="mt-4 divide-y rounded-lg border">
-            {contributions!.map((c) => (
-              <li key={c.religion_id} className="flex items-center justify-between p-4 text-sm">
-                <Link href={`/religions/${c.religions.slug}`} className="font-medium hover:underline">
-                  {c.religions.name}
-                </Link>
-                <span className="tabular-nums">{Number(c.lifetime_points).toLocaleString()} pts</span>
-              </li>
-            ))}
+            {contributions!.map((c) => {
+              const religion = c.religions?.[0];
+              return (
+                <li key={c.religion_id} className="flex items-center justify-between p-4 text-sm">
+                  <Link href={religion?.slug ? `/religions/${religion.slug}` : "/leaderboard"} className="font-medium hover:underline">
+                    {religion?.name ?? "Community"}
+                  </Link>
+                  <span className="tabular-nums">{Number(c.lifetime_points).toLocaleString()} pts</span>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>
