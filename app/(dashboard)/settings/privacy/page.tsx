@@ -11,7 +11,7 @@ function Toggle({ name, label, defaultChecked }: { name: string; label: string; 
 }
 
 export default async function PrivacySettingsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
