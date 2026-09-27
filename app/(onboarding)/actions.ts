@@ -10,7 +10,7 @@ import {
 import { redirect } from "next/navigation";
 
 async function requireUser() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -21,8 +21,6 @@ async function requireUser() {
 export async function saveRegion(formData: FormData) {
   const { userId } = await requireUser();
   const admin = createAdminClient();
-  // The region select doubles as the country code in this simplified
-  // model (each supported region maps 1:1 to a country for now).
   const regionCode = formData.get("regionCode");
   const parsed = onboardingRegionSchema.safeParse({
     countryCode: regionCode,
@@ -44,8 +42,6 @@ export async function savePreferredReligion(formData: FormData) {
   const admin = createAdminClient();
   const religionId = formData.get("religionId");
 
-  // Optional step. Choosing a community here claims the one-time 50-point
-  // welcome bonus. If skipped, the first verified purchase claims it instead.
   if (religionId && typeof religionId === "string") {
     const { error } = await admin
       .from("profiles")
@@ -53,26 +49,17 @@ export async function savePreferredReligion(formData: FormData) {
       .eq("id", userId);
     if (error) return { error: error.message };
 
-    // Grant the one-time 50-point welcome bonus to the user's chosen
-    // community. The database function is idempotent, so retries cannot
-    // create duplicate bonus points.
     const { error: bonusError } = await admin.rpc("grant_welcome_bonus", {
       p_user_id: userId,
       p_religion_id: religionId,
     });
     if (bonusError) return { error: bonusError.message };
 
-    // A successful referral is rewarded only after the referred user has
-    // verified their email and completed community selection. The database
-    // function is idempotent and keeps the reward attributable to the
-    // referrer's chosen community.
     const { error: referralError } = await admin.rpc("claim_referral_reward", {
       p_referred_user_id: userId,
     });
     if (referralError) return { error: referralError.message };
 
-    // If this user previously referred friends before choosing a community,
-    // their pending verified referral rewards can now be attributed safely.
     const { error: pendingReferralError } = await admin.rpc("claim_pending_referral_rewards", {
       p_referrer_user_id: userId,
     });
@@ -94,7 +81,6 @@ export async function saveUsername(formData: FormData) {
     .eq("id", userId);
 
   if (error) {
-    // Unique violation -> username taken
     if ((error as { code?: string }).code === "23505") {
       return { error: "That username is already taken." };
     }
