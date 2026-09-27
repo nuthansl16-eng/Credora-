@@ -26,7 +26,7 @@ export default async function ContributionsPage() {
           {transactions!.map((t) => (
             <li key={t.id} className="flex items-center justify-between p-4 text-sm">
               <div>
-                <p className="font-medium">{t.religions?.name}</p>
+                <p className="font-medium">{t.religions?.[0]?.name}</p>
                 <p className="text-xs text-muted-foreground">
                   {t.transaction_type} · {new Date(t.created_at).toLocaleString()}
                 </p>
