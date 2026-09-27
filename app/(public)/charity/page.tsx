@@ -3,7 +3,7 @@ import { appConfig } from "@/lib/config";
 import { renderLegalDoc } from "@/lib/render-legal-doc";
 
 export default async function CharityPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data: allocations } = await supabase
     .from("charity_allocations")
     .select("reporting_period_start, reporting_period_end, allocated_amount_minor_units, currency, recipient_organization, allocation_date, status")
