@@ -59,7 +59,7 @@ async function getTop100(religionId: string) {
 }
 
 export default async function ReligionProfilePage({ params }: { params: { slug: string } }) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: religion } = await supabase
     .from("religions")
