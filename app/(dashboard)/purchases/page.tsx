@@ -20,23 +20,26 @@ export default async function PurchaseHistoryPage() {
         <p className="mt-6 text-sm text-muted-foreground">No purchases yet.</p>
       ) : (
         <ul className="mt-6 divide-y rounded-lg border">
-          {purchases!.map((p) => (
-            <li key={p.id} className="flex items-center justify-between p-4 text-sm">
-              <div>
-                <p className="font-medium">{p.religions?.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {new Date(p.created_at).toLocaleString()} · {p.payment_provider}
-                  {p.payment_provider === "mock" && " (development only)"}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold">
-                  {(p.amount_minor_units / 100).toFixed(2)} {p.currency}
-                </p>
-                <p className="text-xs capitalize text-muted-foreground">{p.status}</p>
-              </div>
-            </li>
-          ))}
+          {purchases!.map((p) => {
+            const religion = p.religions?.[0];
+            return (
+              <li key={p.id} className="flex items-center justify-between p-4 text-sm">
+                <div>
+                  <p className="font-medium">{religion?.name ?? "Community"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(p.created_at).toLocaleString()} · {p.payment_provider}
+                    {p.payment_provider === "mock" && " (development only)"}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold">
+                    {(p.amount_minor_units / 100).toFixed(2)} {p.currency}
+                  </p>
+                  <p className="text-xs capitalize text-muted-foreground">{p.status}</p>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
     </main>
